@@ -1,6 +1,4 @@
 Install
-===
-Debian
 ---
 ```bash
 mkdir /opt/ai
