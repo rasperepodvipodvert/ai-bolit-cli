@@ -11,7 +11,14 @@ How to Use
 ---
 Check sites on VPS/VDS/etc...
 ```bash
-python3 /opt/ai/start.py scan
-or 
+python3 /opt/ai/start.py scan #scan all sites
 python3 /opt/ai/start.py # for help
+```
+Cron settings for auto update and scan
+---
+
+```
+50 5 * * 0 python3 /opt/ai/start.py update
+0 6 * * 0 python3 /opt/ai/start.py scan
+0 9 * * 0 python3 /opt/ai/start.py send_report
 ```
