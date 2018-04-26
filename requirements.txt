@@ -1,0 +1,4 @@
+beautifulsoup4
+slacker
+click
+requests
