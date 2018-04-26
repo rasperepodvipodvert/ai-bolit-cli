@@ -11,7 +11,7 @@ How to Use
 ---
 Check sites on VPS/VDS/etc...
 ```bash
-python3 /opr/ai/start.py scan
+python3 /opt/ai/start.py scan
 or 
-python3 /opr/ai/start.py # for help
+python3 /opt/ai/start.py # for help
 ```
