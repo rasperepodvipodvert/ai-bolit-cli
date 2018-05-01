@@ -9,18 +9,21 @@ import logging
 import shutil
 import subprocess
 import zipfile
+import requests
 from bs4 import BeautifulSoup
 # Т.к. у нас корпоративное общение все отчеты шлем в слакер (при желании)
 from slacker import Slacker
 
+console = logging.StreamHandler()
+console.setFormatter(logging.Formatter(u'%(levelname)-8s [%(asctime)s]  %(message)s',))
 logging.basicConfig(
     level=logging.INFO,
     format=u'%(levelname)-8s [%(asctime)s]  %(message)s',
-    # filename = u'mylog.log'
-    filename='ai-bolit.log'
+    filename='ai-bolit.log',
 )
+logging.getLogger('').addHandler(console)
 
-
+os.chdir(config.WORK_DIR)
 def get_site_name(path):
     """
     Функция берет строку пути и отрезает последннее составляющее и возвращает его
@@ -161,15 +164,20 @@ def sent_report_to_slack(title, file_path):
     :return: 1 - если отчет отправлен, 0 - отчет не отправлен
     """
     try:
+        logging.info('Send report from slack to: ' + config.slack_channel)
         slack = Slacker(config.slack_key)
         if os.path.isfile(file_path):
+            slack.chat.post_message(
+                channel=config.slack_channel,
+                text=open(config.logFileName, 'rb').read(),
+                username='AI-BOLIT'
+            )
             slack.files.upload(
                 channels=config.slack_channel,
                 file_=file_path,
                 title=title,
                 filetype='zip',
             )
-            clear_log_file()
             return 1
         else:
             slack.chat.post_message(
@@ -179,6 +187,7 @@ def sent_report_to_slack(title, file_path):
             )
             return 0
     except Exception as e:
+        print(e)
         return 0
 
 
@@ -221,7 +230,6 @@ def send_report_to_mail(title, file_path):
         server.login(username, password)
         server.sendmail(sender, targets, msg.as_string())
         server.quit()
-        clear_log_file()
         return 1
     except Exception as e:
         return 0
@@ -267,25 +275,28 @@ def cli():
 
 @click.command()
 def update():
-    import requests
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) Gecko/20100101 Firefox/45.0'
-    }
-    url = get_aiupdate_url()
-    logging.info(u'Download updates: %s' % url)
-    r = requests.get(url, headers=headers)
-    with open(config.WORK_DIR+'ai.zip', 'wb') as zip:
-        zip.write(r.content)
-    logging.info(u'Extract updates')
-    unzip_file(config.WORK_DIR+'ai.zip')
-    logging.info(u'Remove temp files')
-    os.remove(config.WORK_DIR+'ai.zip')
-    logging.info(u'Update done!')
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) Gecko/20100101 Firefox/45.0'
+        }
+        url = get_aiupdate_url()
+        logging.info('Download updates: %s' % url)
+        r = requests.get(url, headers=headers)
+        with open(config.WORK_DIR+'/ai.zip', 'wb') as zip:
+            zip.write(r.content)
+        logging.info('Extract updates')
+        unzip_file(config.WORK_DIR+'/ai.zip')
+        logging.info('Remove temp files')
+        os.remove(config.WORK_DIR+'/ai.zip')
+        logging.info('Update done!')
+    except Exception as e:
+        print(e)
 
 
 @click.command()
 # @click.argument('path')
 def scan():
+    clear_log_file()
     if os.path.isdir(config.REPORT_PATH):
         logging.info('Remove old report')
         shutil.rmtree(config.REPORT_PATH)
