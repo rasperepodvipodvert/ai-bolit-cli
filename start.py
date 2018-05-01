@@ -14,6 +14,8 @@ from bs4 import BeautifulSoup
 # Т.к. у нас корпоративное общение все отчеты шлем в слакер (при желании)
 from slacker import Slacker
 
+
+os.chdir(config.WORK_DIR)
 console = logging.StreamHandler()
 console.setFormatter(logging.Formatter(u'%(levelname)-8s [%(asctime)s]  %(message)s',))
 logging.basicConfig(
@@ -23,7 +25,6 @@ logging.basicConfig(
 )
 logging.getLogger('').addHandler(console)
 
-os.chdir(config.WORK_DIR)
 def get_site_name(path):
     """
     Функция берет строку пути и отрезает последннее составляющее и возвращает его
