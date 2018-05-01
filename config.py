@@ -1,14 +1,24 @@
 import os
 # Общие параметры
 path='/var/www'
+logFileName = 'ai-bolit.log'
+
 try:
     SERVER_NAME = os.uname()[1]
 except:
-    SERVER_NAME='nocomp'
+    SERVER_NAME='NONAME'
 
 # Настройки для Slack
-slack_key = 'xoxb-305032156928-lSlI90MIcjUu29cg1W3IM57V2' # введите свой slack key
+slack_key = 'xoxb-305032156928-lSlI90MIcjUu29cg1W3IM57V2 # введите свой slack key
 slack_channel='#4admin'
+
+# Config for e-mail send report
+smtp_ssl_host = 'smtp.yandex.ru'
+smtp_ssl_port = 465
+username = 'spambot@filatovz.ru'
+password = 'pass'
+sender = 'spambot@filatovz.ru'
+targets = ['ivan@filatovz.ru']
 
 # Настройки для работы AI-BOLIT
 WORK_DIR = '/opt/ai/'
