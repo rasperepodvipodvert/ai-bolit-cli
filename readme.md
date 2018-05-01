@@ -5,6 +5,7 @@ Requirements
 Install
 ---
 ```bash
+apt install python3-pip -y
 mkdir /opt/ai
 cd /opt/ai
 git clone https://github.com/rasperepodvipodvert/ai-bolit-cli.git
