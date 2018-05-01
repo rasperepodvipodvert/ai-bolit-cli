@@ -148,9 +148,7 @@ def run_ai(SITE_DIR):
         cwd=config.WORK_DIR
     )
     sites = p.stdout.read().decode("utf-8",'ignore')
-    logging.info('Scan done!')
-    # print(sites)
-    # return sites
+    logging.info('Scan done! VIRUS STATUS: ' + str(p.returncode))
 
 
 def remove_report():
